@@ -8,8 +8,18 @@ export const selectFilter = state => state.filter;
 export const selectVisibleContacts = createSelector(
   [selectContacts, selectFilter],
   (contacts, filter) => {
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );
+    const normalizedFilter = filter.toLowerCase().trim();
+
+    return contacts.filter(contact => {
+      if (contact.name && contact.phone) {
+        const nameMatches = contact.name
+          .toLowerCase()
+          .includes(normalizedFilter);
+        const phoneMatches = contact.phone.includes(normalizedFilter);
+
+        return nameMatches || phoneMatches;
+      }
+      return false;
+    });
   }
 );
